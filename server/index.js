@@ -17,29 +17,8 @@ connectDB();
 
 const app = express();
 
-// CORS: Allow both deployed and local origins
-const allowedOrigins = [
-  'https://theni-sathuragiri-maruthi-jedg.vercel.app',
-  'https://theni-sathuragiri-maruthi-8lnn.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:3000'
-];
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    return callback(null, false);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Handle preflight requests
+// CORS: Allow all origins for maximum compatibility
+app.use(cors());
 app.options('*', cors());
 
 app.use(express.json());
