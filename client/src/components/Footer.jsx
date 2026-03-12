@@ -43,16 +43,16 @@ export default function Footer() {
                     <div className="footer-col">
                         <h4>Contact Info</h4>
                         <ul>
-                            <li>📍 123 Auto Street, City</li>
-                            <li>📞 +91 98765 43210</li>
-                            <li>✉️ info@autocarepro.com</li>
-                            <li>🕐 Mon-Sat: 8AM - 8PM</li>
+                            <li>📍 21/5, Raventhira Oil Mill Compound,Cumbum Road,</li><li>Theni - 625531.</li>
+                            <li>📞 +91 9047033678</li>
+                            <li>✉️sathuragirimotorworks@gmail.com</li>
+                            <li>🕐 Mon-Sat: 8:45 AM - 6:30 PM</li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="footer-bottom">
-                    <p>© {new Date().getFullYear()} AutoCare Pro. All rights reserved. Built with ❤️</p>
+                    <p>© {new Date().getFullYear()} Sathuragiri Motors . All rights reserved. Built with ❤️</p>
                 </div>
             </div>
         </footer>

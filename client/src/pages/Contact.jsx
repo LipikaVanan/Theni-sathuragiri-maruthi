@@ -3,10 +3,10 @@ import { toast } from 'react-toastify'
 import api from '../api/axios'
 
 const contactInfo = [
-    { icon: '📍', title: 'Visit Us', text: '123 Auto Street, Service Road, Mumbai, Maharashtra 400001' },
-    { icon: '📞', title: 'Call Us', text: '+91 98765 43210' },
-    { icon: '✉️', title: 'Email Us', text: 'info@autocarepro.com' },
-    { icon: '🕐', title: 'Working Hours', text: 'Mon - Sat: 8:00 AM - 8:00 PM' }
+    { icon: '📍', title: 'Visit Us', text: '21/5, Raventhira Oil Mill Compound,Cumbum Road,Theni - 625531.' },
+    { icon: '📞', title: 'Call Us', text: '+91 9047033678' },
+    { icon: '✉️', title: 'Email Us', text: 'sathuragirimotorworks@gmail.com' },
+    { icon: '🕐', title: 'Working Hours', text: 'Mon - Sat: 8:45 AM - 6:30 PM' }
 ]
 
 export default function Contact() {
