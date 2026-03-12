@@ -16,7 +16,26 @@ dotenv.config();
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// CORS: Allow both deployed and local origins
+const allowedOrigins = [
+  'https://theni-sathuragiri-maruthi-jedg.vercel.app',
+  'https://theni-sathuragiri-maruthi-8lnn.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000'
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 app.get('/', (req, res) => res.send('AutoCare Pro API'));
