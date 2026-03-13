@@ -13,6 +13,7 @@ import ManagePayments from './pages/ManagePayments'
 import ManageInventory from './pages/ManageInventory'
 import ManageVehicles from './pages/ManageVehicles'
 import ManageRewards from './pages/ManageRewards'
+import ManageContacts from './pages/ManageContacts'
 
 function ProtectedAdmin({ children }) {
     const token = localStorage.getItem('adminToken')
@@ -34,6 +35,7 @@ export default function App() {
                 <Route path="/inventory" element={<ProtectedAdmin><ManageInventory /></ProtectedAdmin>} />
                 <Route path="/vehicles" element={<ProtectedAdmin><ManageVehicles /></ProtectedAdmin>} />
                 <Route path="/rewards" element={<ProtectedAdmin><ManageRewards /></ProtectedAdmin>} />
+                <Route path="/contacts" element={<ProtectedAdmin><ManageContacts /></ProtectedAdmin>} />
             </Routes>
             <ToastContainer position="top-right" autoClose={3000} theme="dark" />
         </div>

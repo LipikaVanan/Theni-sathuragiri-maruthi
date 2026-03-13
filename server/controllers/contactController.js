@@ -3,12 +3,12 @@ const Contact = require('../models/Contact');
 const { sendContactNotification } = require('../utils/emailService');
 
 exports.createContact = asyncHandler(async (req, res) => {
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, rating } = req.body;
     if (!name || !email || !subject || !message) {
         res.status(400);
         throw new Error('All fields are required');
     }
-    const contact = await Contact.create({ name, email, subject, message });
+    const contact = await Contact.create({ name, email, subject, message, rating });
 
     // Send email notification (non-blocking)
     sendContactNotification({ name, email, subject, message });

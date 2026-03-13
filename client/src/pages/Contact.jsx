@@ -10,7 +10,7 @@ const contactInfo = [
 ]
 
 export default function Contact() {
-    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', rating: 0 })
     const [sending, setSending] = useState(false)
 
     const handleSubmit = async (e) => {
@@ -19,11 +19,15 @@ export default function Contact() {
             toast.error('Please fill all fields')
             return
         }
+        if (form.rating === 0) {
+            toast.error('Please select a star rating')
+            return
+        }
         setSending(true)
         try {
             await api.post('/api/contact', form)
             toast.success('Message sent successfully! 📧')
-            setForm({ name: '', email: '', subject: '', message: '' })
+            setForm({ name: '', email: '', subject: '', message: '', rating: 0 })
         } catch {
             toast.error('Failed to send message')
         }
@@ -80,6 +84,20 @@ export default function Contact() {
                                 <div className="form-group">
                                     <label className="form-label">Message</label>
                                     <textarea className="form-control" rows="4" placeholder="Tell us more..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label" style={{ marginBottom: '0.8rem', display: 'block' }}>Rate Your Experience</label>
+                                    <div style={{ display: 'flex', gap: '8px', fontSize: '1.8rem', cursor: 'pointer', marginBottom: '1rem' }}>
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <span 
+                                                key={star} 
+                                                onClick={() => setForm({ ...form, rating: star })}
+                                                style={{ color: star <= form.rating ? '#FFD700' : 'var(--border-glass)', transition: 'color 0.2s' }}
+                                            >
+                                                ★
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
                                 <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%' }} disabled={sending}>
                                     {sending ? 'Sending...' : '📧 Send Message'}

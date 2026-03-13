@@ -5,6 +5,7 @@ const contactSchema = new mongoose.Schema({
     email: { type: String, required: true },
     subject: { type: String, required: true },
     message: { type: String, required: true },
+    rating: { type: Number, min: 0, max: 5, default: 0 },
     createdAt: { type: Date, default: Date.now }
 });
 

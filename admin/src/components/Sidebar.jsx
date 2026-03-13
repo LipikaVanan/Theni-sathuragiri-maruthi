@@ -47,6 +47,9 @@ export default function Sidebar() {
                 <NavLink to="/rewards" className={({ isActive }) => isActive ? 'active' : ''}>
                     <span className="nav-icon">🎁</span> Rewards
                 </NavLink>
+                <NavLink to="/contacts" className={({ isActive }) => isActive ? 'active' : ''}>
+                    <span className="nav-icon">📩</span> Contact Messages
+                </NavLink>
             </nav>
 
             <div className="sidebar-footer">
