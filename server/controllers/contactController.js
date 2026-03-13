@@ -8,7 +8,7 @@ exports.createContact = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('All fields are required');
     }
-    const contact = await Contact.create({ name, email, subject, message, rating });
+    const contact = await Contact.create({ name, email, subject, message, rating: Number(rating) || 0 });
 
     // Send email notification (non-blocking)
     sendContactNotification({ name, email, subject, message });
