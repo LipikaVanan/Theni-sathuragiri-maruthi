@@ -721,3 +721,14 @@ select.form-control option {
     border: 1px solid var(--border-glass) !important;
     border-radius: var(--radius-md) !important;
 }
+
+/* Star Ratings (GFG Style) */
+.star {
+    color: var(--border-glass);
+    transition: color 0.2s ease-in-out;
+}
+.star.one { color: #ff5e5e; }
+.star.two { color: #ffa200; }
+.star.three { color: #ffdf00; }
+.star.four { color: #9fdf00; }
+.star.five { color: #3bcf41; }

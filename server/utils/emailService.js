@@ -1,7 +1,9 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: process.env.SMTP_PORT || 465,
+    secure: process.env.SMTP_SECURE === 'true' || true,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -58,4 +60,29 @@ const sendContactNotification = async (contactData) => {
     }
 };
 
-module.exports = { sendBookingConfirmation, sendContactNotification };
+const sendBookingUpdateNotification = async (toEmail, bookingDetails) => {
+    try {
+        const mailOptions = {
+            from: `"AutoCare Pro" <${process.env.EMAIL_USER}>`,
+            to: toEmail,
+            subject: `Booking Update: ${bookingDetails.status} – AutoCare Pro`,
+            html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0f172a;color:#e2e8f0;padding:30px;border-radius:12px;">
+          <h1 style="color:#3b82f6;text-align:center;">🚗 AutoCare Pro</h1>
+          <h2 style="color:#f97316;text-align:center;">Booking Status Updated</h2>
+          <div style="background:#1e293b;padding:20px;border-radius:8px;margin:20px 0;">
+            <p><strong>Service:</strong> ${bookingDetails.service || 'N/A'}</p>
+            <p><strong>New Status:</strong> <span style="color:#22c55e;">${bookingDetails.status}</span></p>
+          </div>
+          <p style="text-align:center;color:#94a3b8;">If you have any questions, please contact us!</p>
+        </div>
+      `,
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('Booking update email sent to', toEmail);
+    } catch (error) {
+        console.error('Email sending failed:', error.message);
+    }
+};
+
+module.exports = { sendBookingConfirmation, sendContactNotification, sendBookingUpdateNotification };

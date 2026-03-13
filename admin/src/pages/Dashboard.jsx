@@ -6,9 +6,14 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        api.get('/api/admin/stats')
-            .then(res => { setStats(res.data); setLoading(false) })
-            .catch(() => setLoading(false))
+        const fetchData = () => {
+            api.get('/api/admin/stats')
+                .then(res => { setStats(res.data); setLoading(false) })
+                .catch(() => setLoading(false))
+        }
+        fetchData()
+        const interval = setInterval(fetchData, 5000)
+        return () => clearInterval(interval)
     }, [])
 
     if (loading) return <div className="spinner-overlay"><div className="spinner"></div></div>

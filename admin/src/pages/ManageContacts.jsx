@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import api from '../api/axios'
 
+const renderStars = (rating, size = '1.1rem') => {
+    if (!rating || rating === 0) {
+        return <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic' }}>Not Rated</span>
+    }
+    const classMap = { 1: "one", 2: "two", 3: "three", 4: "four", 5: "five" }
+    const cls = classMap[rating] || ""
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ fontSize: size, letterSpacing: '2px' }}>
+                {[1, 2, 3, 4, 5].map(i => (
+                    <span key={i} className={`star ${i <= rating ? cls : ''}`}>★</span>
+                ))}
+            </div>
+            <span id="output" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Rating is: {rating}/5</span>
+        </div>
+    )
+}
+
 export default function ManageContacts() {
     const [contacts, setContacts] = useState([])
     const [loading, setLoading] = useState(true)
@@ -8,9 +26,14 @@ export default function ManageContacts() {
     const [search, setSearch] = useState('')
 
     useEffect(() => {
-        api.get('/api/contact')
-            .then(res => { setContacts(res.data); setLoading(false) })
-            .catch(() => setLoading(false))
+        const fetchData = () => {
+            api.get('/api/contact')
+                .then(res => { setContacts(res.data); setLoading(false) })
+                .catch(() => setLoading(false))
+        }
+        fetchData()
+        const interval = setInterval(fetchData, 5000)
+        return () => clearInterval(interval)
     }, [])
 
     const filtered = contacts.filter(c =>
@@ -67,13 +90,7 @@ export default function ManageContacts() {
                                     <td style={{ color: 'var(--accent-blue-light)', fontSize: '0.88rem' }}>{c.email}</td>
                                     <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.subject}</td>
                                     <td>
-                                        {c.rating > 0 ? (
-                                            <div style={{ color: '#FFD700', fontSize: '1.1rem', letterSpacing: '1px' }}>
-                                                {'★'.repeat(c.rating)}{'☆'.repeat(5 - c.rating)}
-                                            </div>
-                                        ) : (
-                                            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic' }}>Not Rated</span>
-                                        )}
+                                        {renderStars(c.rating, '1.1rem')}
                                     </td>
                                     <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
                                         {new Date(c.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -105,7 +122,7 @@ export default function ManageContacts() {
                     onClick={() => setSelected(null)}
                 >
                     <div
-                        className="table-card"
+                        className="modal-content"
                         style={{ maxWidth: '540px', width: '100%', padding: '2rem', position: 'relative' }}
                         onClick={e => e.stopPropagation()}
                     >
@@ -139,13 +156,7 @@ export default function ManageContacts() {
                             </div>
                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                 <span style={{ color: 'var(--text-muted)', minWidth: '80px' }}>Rating:</span>
-                                {selected.rating > 0 ? (
-                                    <span style={{ color: '#FFD700', fontSize: '1.4rem', letterSpacing: '2px' }}>
-                                        {'★'.repeat(selected.rating)}{'☆'.repeat(5 - selected.rating)}
-                                    </span>
-                                ) : (
-                                    <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Not Rated</span>
-                                )}
+                                {renderStars(selected.rating, '1.4rem')}
                             </div>
                             <div>
                                 <div style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Message:</div>

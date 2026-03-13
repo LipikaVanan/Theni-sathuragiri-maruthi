@@ -43,7 +43,7 @@ export default function BookService() {
   const [done, setDone] = useState(false)
 
   const [form, setForm] = useState({
-    serviceId: searchParams.get('service') || '',
+    serviceIds: searchParams.get('service') ? [searchParams.get('service')] : [],
     carBrand: '',
     carModel: '',
     carNumber: '',
@@ -68,15 +68,25 @@ export default function BookService() {
       .catch(() => { })
   }, [user, navigate])
 
-  const selectedService = services.find(s => s._id === form.serviceId)
+  const selectedServices = services.filter(s => form.serviceIds.includes(s._id))
+  const totalAmount = selectedServices.reduce((acc, s) => acc + s.price, 0)
 
   const updateForm = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
+  const toggleService = (id) => {
+    setForm(prev => {
+      const ids = prev.serviceIds.includes(id)
+        ? prev.serviceIds.filter(i => i !== id)
+        : [...prev.serviceIds, id]
+      return { ...prev, serviceIds: ids }
+    })
+  }
+
   const canNext = () => {
     switch (step) {
-      case 0: return !!form.serviceId
+      case 0: return form.serviceIds.length > 0
       case 1: return form.carModel && form.carNumber
       case 2: return form.bookingDate && form.address
       case 3: return !!form.paymentMethod
@@ -88,7 +98,7 @@ export default function BookService() {
     setSubmitting(true)
     try {
       await api.post('/api/bookings', {
-        serviceId: form.serviceId,
+        serviceIds: form.serviceIds,
         bookingDate: new Date(`${form.bookingDate}T${form.bookingTime}`),
         carDetails: {
           model: form.carModel,
@@ -97,15 +107,15 @@ export default function BookService() {
         },
         address: form.address,
         paymentMethod: form.paymentMethod,
-        totalAmount: selectedService?.price || 0,
+        totalAmount: totalAmount,
         status: 'Pending'
       })
       
       // Add reward points for the completed/paid booking
-      if (selectedService?.price > 0) {
+      if (totalAmount > 0) {
         await api.post('/api/rewards/add', {
           userId: user._id,
-          amountSpent: selectedService.price
+          amountSpent: totalAmount
         }).catch(err => console.error('Failed to add rewards', err));
       }
 
@@ -162,10 +172,12 @@ export default function BookService() {
               {services.map(s => (
                 <div
                   key={s._id}
-                  className={`payment-option ${form.serviceId === s._id ? 'selected' : ''}`}
-                  onClick={() => updateForm('serviceId', s._id)}
+                  className={`payment-option ${form.serviceIds.includes(s._id) ? 'selected' : ''}`}
+                  onClick={() => toggleService(s._id)}
                 >
-                  <div className="payment-radio"></div>
+                  <div className={`payment-checkbox ${form.serviceIds.includes(s._id) ? 'checked' : ''}`}>
+                    {form.serviceIds.includes(s._id) && '✓'}
+                  </div>
                   <div className="payment-info" style={{ flex: 1 }}>
                     <h4>{s.title}</h4>
                     <p>{s.description?.slice(0, 60)}...</p>
@@ -341,9 +353,16 @@ export default function BookService() {
           <div>
             <h3 style={{ marginBottom: '1rem' }}>Booking Summary</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border-glass)' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Service</span>
-                <span style={{ fontWeight: 600 }}>{selectedService?.title || '—'}</span>
+              <div style={{ padding: '0.75rem 0', borderBottom: '1px solid var(--border-glass)' }}>
+                <div style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Selected Services</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {selectedServices.map(s => (
+                    <div key={s._id} style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+                      <span>{s.title}</span>
+                      <span>₹{s.price}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border-glass)' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Car</span>
@@ -359,7 +378,7 @@ export default function BookService() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem 0', background: 'rgba(59,130,246,0.08)', borderRadius: 'var(--radius-sm)', marginTop: '0.5rem', paddingLeft: '1rem', paddingRight: '1rem' }}>
                 <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>Total Amount</span>
-                <span style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--accent-orange)' }}>₹{selectedService?.price || 0}</span>
+                <span style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--accent-orange)' }}>₹{totalAmount}</span>
               </div>
             </div>
           </div>
